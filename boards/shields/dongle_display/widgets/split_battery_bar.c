@@ -32,9 +32,7 @@ struct peripheral_battery {
 static struct battery_state {
     uint8_t levels[ZMK_SPLIT_BLE_PERIPHERAL_COUNT];
     bool connected[ZMK_SPLIT_BLE_PERIPHERAL_COUNT];
-};
-
-static struct battery_state current_state = {0};
+} current_state = {0};
 
 static void set_battery_bar_value(lv_obj_t *widget, uint8_t source, uint8_t level) {
     if (source >= ZMK_SPLIT_BLE_PERIPHERAL_COUNT) {
@@ -46,8 +44,14 @@ static void set_battery_bar_value(lv_obj_t *widget, uint8_t source, uint8_t leve
         return;
     }
 
-    lv_label_set_text_fmt(peripherals[source].label, "%u%%", level);
-    lv_bar_set_value(peripherals[source].bar, level, LV_ANIM_OFF);
+    char text[8];
+    snprintf(text, sizeof(text), "%u%%", level);
+    lv_label_set_text(peripherals[source].label, text);
+    
+    // Manually draw battery level as a filled rectangle
+    lv_obj_t *bar = peripherals[source].bar;
+    int32_t bar_width = (level * 30) / 100; // 30 is the total width
+    lv_obj_set_width(bar, bar_width > 0 ? bar_width : 1);
 }
 
 static void set_battery_connection(lv_obj_t *widget, uint8_t source, bool connected) {
@@ -99,27 +103,33 @@ int zmk_widget_split_battery_bar_init(struct zmk_widget_split_battery_bar *widge
     struct peripheral_battery *peripherals = k_malloc(sizeof(struct peripheral_battery) * ZMK_SPLIT_BLE_PERIPHERAL_COUNT);
     lv_obj_set_user_data(widget->obj, peripherals);
 
-    lv_obj_set_size(widget->obj, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_flex_flow(widget->obj, LV_FLEX_FLOW_ROW);
-    lv_obj_set_style_pad_column(widget->obj, 8, 0);
+    lv_obj_set_size(widget->obj, 128, 20);
 
     for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
+        // Create container for each peripheral
         lv_obj_t *container = lv_obj_create(widget->obj);
-        lv_obj_set_size(container, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+        lv_obj_set_size(container, 40, 18);
+        lv_obj_set_pos(container, i * 44, 0); // Manual positioning
 
+        // Label showing percentage
         lv_obj_t *label = lv_label_create(container);
         lv_label_set_text(label, "--");
         lv_obj_align(label, LV_ALIGN_TOP_MID, 0, 0);
 
-        lv_obj_t *bar = lv_bar_create(container);
-        lv_obj_set_size(bar, 30, 6);
-        lv_bar_set_range(bar, 0, 100);
-        lv_bar_set_value(bar, 0, LV_ANIM_OFF);
-        lv_obj_align_to(bar, label, LV_ALIGN_OUT_BOTTOM_MID, 0, 2);
-
-        // For OLED, use white foreground on black background
-        lv_obj_set_style_bg_color(bar, lv_color_black(), LV_PART_MAIN);
-        lv_obj_set_style_bg_color(bar, lv_color_white(), LV_PART_INDICATOR);
+        // Simple bar as a filled rectangle (no lv_bar widget)
+        lv_obj_t *bar_bg = lv_obj_create(container);
+        lv_obj_set_size(bar_bg, 30, 4);
+        lv_obj_set_style_bg_color(bar_bg, lv_color_black(), 0);
+        lv_obj_set_style_border_width(bar_bg, 1, 0);
+        lv_obj_set_style_border_color(bar_bg, lv_color_white(), 0);
+        lv_obj_align(bar_bg, LV_ALIGN_BOTTOM_MID, 0, 0);
+        
+        // Bar indicator (filled part)
+        lv_obj_t *bar = lv_obj_create(bar_bg);
+        lv_obj_set_size(bar, 1, 4);
+        lv_obj_set_style_bg_color(bar, lv_color_white(), 0);
+        lv_obj_set_style_border_width(bar, 0, 0);
+        lv_obj_align(bar, LV_ALIGN_LEFT_MID, 0, 0);
 
         peripherals[i].label = label;
         peripherals[i].bar = bar;

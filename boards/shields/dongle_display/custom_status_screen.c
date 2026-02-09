@@ -21,30 +21,22 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 // New prospector-style widgets
 static struct zmk_widget_layer_roller layer_roller_widget;
+#if IS_ENABLED(CONFIG_ZMK_SPLIT)
 static struct zmk_widget_split_battery_bar split_battery_bar_widget;
+#endif
+#if IS_ENABLED(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED)
 static struct zmk_widget_caps_word_indicator caps_word_indicator_widget;
+#endif
 
 // Keep existing widgets for compatibility
 static struct zmk_widget_output_status output_status_widget;
 
-#if IS_ENABLED(CONFIG_ZMK_BATTERY)
+#if IS_ENABLED(CONFIG_ZMK_BATTERY) && IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_DONGLE_BATTERY)
 static struct zmk_widget_dongle_battery_status dongle_battery_status_widget;
-#endif
-
-#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_LAYER)
-static struct zmk_widget_layer_status layer_status_widget;
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_MODIFIERS)
 static struct zmk_widget_modifiers modifiers_widget;
-#if IS_ENABLED(CONFIG_ZMK_HID_INDICATORS)
-static struct zmk_widget_hid_indicators hid_indicators_widget;
-#endif
-
-#endif
-
-#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_BONGO_CAT)
-static struct zmk_widget_bongo_cat bongo_cat_widget;
 #endif
 
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_WPM)
