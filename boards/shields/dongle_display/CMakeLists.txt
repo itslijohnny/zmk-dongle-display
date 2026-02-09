@@ -6,6 +6,13 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM AND ((NOT CONF
     zephyr_library_include_directories(${ZEPHYR_BASE}/drivers)
     zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)
     zephyr_library_sources(custom_status_screen.c)
+    
+    # New prospector-style widgets
+    zephyr_library_sources(widgets/layer_roller.c)
+    zephyr_library_sources(widgets/split_battery_bar.c)
+    zephyr_library_sources_ifdef(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED widgets/caps_word_indicator.c)
+    
+    # Original widgets (kept for compatibility)
     if (CONFIG_ZMK_DONGLE_DISPLAY_BONGO_CAT)
         zephyr_library_sources(widgets/bongo_cat.c)
         zephyr_library_sources(widgets/bongo_cat_images.c)
