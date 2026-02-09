@@ -10,7 +10,8 @@ if(CONFIG_ZMK_DISPLAY AND CONFIG_ZMK_DISPLAY_STATUS_SCREEN_CUSTOM AND ((NOT CONF
     # New prospector-style widgets
     zephyr_library_sources(widgets/layer_roller.c)
     zephyr_library_sources(widgets/split_battery_bar.c)
-    zephyr_library_sources_ifdef(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED widgets/caps_word_indicator.c)
+    # Note: caps_word_indicator requires custom ZMK events not in base ZMK
+    # zephyr_library_sources_ifdef(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR widgets/caps_word_indicator.c)
     
     # Original widgets (kept for compatibility)
     if (CONFIG_ZMK_DONGLE_DISPLAY_BONGO_CAT)

@@ -14,7 +14,9 @@
 #include "widgets/hid_indicators.h"
 #include "widgets/wpm_status.h"
 #include "widgets/split_battery_bar.h"
+#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
 #include "widgets/caps_word_indicator.h"
+#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
@@ -24,7 +26,7 @@ static struct zmk_widget_layer_roller layer_roller_widget;
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
 static struct zmk_widget_split_battery_bar split_battery_bar_widget;
 #endif
-#if IS_ENABLED(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED)
+#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
 static struct zmk_widget_caps_word_indicator caps_word_indicator_widget;
 #endif
 
@@ -66,18 +68,18 @@ lv_obj_t *zmk_display_status_screen() {
     zmk_widget_layer_roller_init(&layer_roller_widget, screen);
     lv_obj_align(zmk_widget_layer_roller_obj(&layer_roller_widget), LV_ALIGN_CENTER, 0, -10);
     
-    // Top right: Modifiers with caps word indicator
+    // Top right: Modifiers (with optional caps word indicator)
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_MODIFIERS)
     zmk_widget_modifiers_init(&modifiers_widget, screen);
     lv_obj_align(zmk_widget_modifiers_obj(&modifiers_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
     
-#if IS_ENABLED(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED)
+#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
     zmk_widget_caps_word_indicator_init(&caps_word_indicator_widget, screen);
     lv_obj_align_to(zmk_widget_caps_word_indicator_obj(&caps_word_indicator_widget), 
                     zmk_widget_modifiers_obj(&modifiers_widget), 
                     LV_ALIGN_OUT_LEFT_MID, -3, 0);
 #endif
-#elif IS_ENABLED(CONFIG_DT_HAS_ZMK_BEHAVIOR_CAPS_WORD_ENABLED)
+#elif IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
     // Just caps word if modifiers disabled
     zmk_widget_caps_word_indicator_init(&caps_word_indicator_widget, screen);
     lv_obj_align(zmk_widget_caps_word_indicator_obj(&caps_word_indicator_widget), LV_ALIGN_TOP_RIGHT, -5, 0);
