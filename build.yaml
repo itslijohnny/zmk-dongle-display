@@ -4,3 +4,5 @@ include:
     shield: rommana_dongle dongle_display
   - board: xiao_ble
     shield: sweep_dongle dongle_display
+  - board: nano_nice
+    shield: dongle_display
