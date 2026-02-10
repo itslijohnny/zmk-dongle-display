@@ -6,7 +6,6 @@
 
 #include "split_battery_bar.h"
 
-#include <zephyr/kernel.h>
 #include <zephyr/bluetooth/services/bas.h>
 
 #include <zephyr/logging/log.h>
@@ -29,18 +28,16 @@ struct peripheral_battery {
     lv_obj_t *bar;
 };
 
+// Static allocation for peripheral battery objects
+static struct peripheral_battery peripherals[ZMK_SPLIT_BLE_PERIPHERAL_COUNT];
+
 static struct battery_state {
     uint8_t levels[ZMK_SPLIT_BLE_PERIPHERAL_COUNT];
     bool connected[ZMK_SPLIT_BLE_PERIPHERAL_COUNT];
 } current_state = {0};
 
-static void set_battery_bar_value(lv_obj_t *widget, uint8_t source, uint8_t level) {
+static void set_battery_bar_value(uint8_t source, uint8_t level) {
     if (source >= ZMK_SPLIT_BLE_PERIPHERAL_COUNT) {
-        return;
-    }
-
-    struct peripheral_battery *peripherals = lv_obj_get_user_data(widget);
-    if (peripherals == NULL) {
         return;
     }
 
@@ -54,13 +51,8 @@ static void set_battery_bar_value(lv_obj_t *widget, uint8_t source, uint8_t leve
     lv_obj_set_width(bar, bar_width > 0 ? bar_width : 1);
 }
 
-static void set_battery_connection(lv_obj_t *widget, uint8_t source, bool connected) {
+static void set_battery_connection(uint8_t source, bool connected) {
     if (source >= ZMK_SPLIT_BLE_PERIPHERAL_COUNT) {
-        return;
-    }
-
-    struct peripheral_battery *peripherals = lv_obj_get_user_data(widget);
-    if (peripherals == NULL) {
         return;
     }
 
@@ -73,12 +65,9 @@ static void set_battery_connection(lv_obj_t *widget, uint8_t source, bool connec
 }
 
 static void battery_bar_update_cb(struct battery_state state) {
-    struct zmk_widget_split_battery_bar *widget;
-    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
-        for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
-            set_battery_bar_value(widget->obj, i, state.levels[i]);
-            set_battery_connection(widget->obj, i, state.connected[i]);
-        }
+    for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
+        set_battery_bar_value(i, state.levels[i]);
+        set_battery_connection(i, state.connected[i]);
     }
 }
 
@@ -98,11 +87,6 @@ ZMK_SUBSCRIPTION(widget_split_battery_bar, zmk_peripheral_battery_state_changed)
 
 int zmk_widget_split_battery_bar_init(struct zmk_widget_split_battery_bar *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    
-    // Allocate peripheral battery objects
-    struct peripheral_battery *peripherals = k_malloc(sizeof(struct peripheral_battery) * ZMK_SPLIT_BLE_PERIPHERAL_COUNT);
-    lv_obj_set_user_data(widget->obj, peripherals);
-
     lv_obj_set_size(widget->obj, 128, 20);
 
     for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
