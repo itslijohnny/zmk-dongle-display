@@ -24,6 +24,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 struct peripheral_battery {
+    lv_obj_t *label;
     lv_obj_t *bar;
     lv_obj_t *bar_bg;
 };
@@ -40,6 +41,10 @@ static void set_battery_bar_value(uint8_t source, uint8_t level) {
     if (source >= ZMK_SPLIT_BLE_PERIPHERAL_COUNT) {
         return;
     }
+
+    char text[8];
+    snprintf(text, sizeof(text), "%u", level);
+    lv_label_set_text(peripherals[source].label, text);
     
     // Manually draw battery level as a filled rectangle
     lv_obj_t *bar = peripherals[source].bar;
@@ -53,9 +58,11 @@ static void set_battery_connection(uint8_t source, bool connected) {
     }
 
     if (connected) {
+        lv_obj_clear_flag(peripherals[source].label, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(peripherals[source].bar_bg, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(peripherals[source].bar, LV_OBJ_FLAG_HIDDEN);
     } else {
+        lv_label_set_text(peripherals[source].label, "--");
         lv_obj_add_flag(peripherals[source].bar_bg, LV_OBJ_FLAG_HIDDEN);
         lv_obj_add_flag(peripherals[source].bar, LV_OBJ_FLAG_HIDDEN);
     }
@@ -87,21 +94,28 @@ int zmk_widget_split_battery_bar_init(struct zmk_widget_split_battery_bar *widge
     lv_obj_set_size(widget->obj, 70, 20);
 
     for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
+        // Label showing percentage (small text, no % symbol)
+        lv_obj_t *label = lv_label_create(widget->obj);
+        lv_label_set_text(label, "--");
+        lv_obj_set_pos(label, i * 33 + 8, 0);
+        lv_obj_set_style_text_font(label, &lv_font_unscii_8, 0);
+        
         // Simple bar as a filled rectangle (no lv_bar widget)
         lv_obj_t *bar_bg = lv_obj_create(widget->obj);
-        lv_obj_set_size(bar_bg, 28, 8);
-        lv_obj_set_pos(bar_bg, i * 33, 6);
+        lv_obj_set_size(bar_bg, 28, 6);
+        lv_obj_set_pos(bar_bg, i * 33, 10);
         lv_obj_set_style_bg_color(bar_bg, lv_color_black(), 0);
         lv_obj_set_style_border_width(bar_bg, 1, 0);
         lv_obj_set_style_border_color(bar_bg, lv_color_white(), 0);
         
         // Bar indicator (filled part)
         lv_obj_t *bar = lv_obj_create(bar_bg);
-        lv_obj_set_size(bar, 1, 8);
+        lv_obj_set_size(bar, 1, 6);
         lv_obj_set_style_bg_color(bar, lv_color_white(), 0);
         lv_obj_set_style_border_width(bar, 0, 0);
         lv_obj_align(bar, LV_ALIGN_LEFT_MID, 0, 0);
 
+        peripherals[i].label = label;
         peripherals[i].bar = bar;
         peripherals[i].bar_bg = bar_bg;
 
