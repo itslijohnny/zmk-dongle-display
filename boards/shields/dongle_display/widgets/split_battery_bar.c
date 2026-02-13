@@ -43,12 +43,7 @@ static void set_battery_bar_value(uint8_t source, uint8_t level) {
     }
 
     char text[8];
-    // Show charging indicator (+) when at 100%
-    if (level >= 100) {
-        snprintf(text, sizeof(text), "+%u%%", level);
-    } else {
-        snprintf(text, sizeof(text), "%u%%", level);
-    }
+    snprintf(text, sizeof(text), "%u%%", level);
     lv_label_set_text(peripherals[source].label, text);
     
     // Manually draw battery level as a filled rectangle
@@ -96,19 +91,19 @@ ZMK_SUBSCRIPTION(widget_split_battery_bar, zmk_peripheral_battery_state_changed)
 
 int zmk_widget_split_battery_bar_init(struct zmk_widget_split_battery_bar *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    lv_obj_set_size(widget->obj, 70, 20);
+    lv_obj_set_size(widget->obj, 78, 20);
 
     for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
         // Label showing percentage (small text, with % symbol)
         lv_obj_t *label = lv_label_create(widget->obj);
         lv_label_set_text(label, "--");
-        lv_obj_set_pos(label, i * 33 + 2, 0);
+        lv_obj_set_pos(label, i * 38 + 2, 0);
         lv_obj_set_style_text_font(label, &lv_font_unscii_8, 0);
         
         // Simple bar as a filled rectangle (no lv_bar widget)
         lv_obj_t *bar_bg = lv_obj_create(widget->obj);
         lv_obj_set_size(bar_bg, 28, 6);
-        lv_obj_set_pos(bar_bg, i * 33, 10);
+        lv_obj_set_pos(bar_bg, i * 38, 10);
         lv_obj_set_style_bg_color(bar_bg, lv_color_black(), 0);
         lv_obj_set_style_border_width(bar_bg, 1, 0);
         lv_obj_set_style_border_color(bar_bg, lv_color_white(), 0);
