@@ -47,7 +47,7 @@ static void set_battery_bar_value(uint8_t source, uint8_t level) {
     
     // Manually draw battery level as a filled rectangle
     lv_obj_t *bar = peripherals[source].bar;
-    int32_t bar_width = (level * 30) / 100; // 30 is the total width
+    int32_t bar_width = (level * 25) / 100; // 25 is the total width
     lv_obj_set_width(bar, bar_width > 0 ? bar_width : 1);
 }
 
@@ -87,13 +87,13 @@ ZMK_SUBSCRIPTION(widget_split_battery_bar, zmk_peripheral_battery_state_changed)
 
 int zmk_widget_split_battery_bar_init(struct zmk_widget_split_battery_bar *widget, lv_obj_t *parent) {
     widget->obj = lv_obj_create(parent);
-    lv_obj_set_size(widget->obj, 128, 20);
+    lv_obj_set_size(widget->obj, 70, 20);
 
     for (int i = 0; i < ZMK_SPLIT_BLE_PERIPHERAL_COUNT; i++) {
         // Create container for each peripheral
         lv_obj_t *container = lv_obj_create(widget->obj);
-        lv_obj_set_size(container, 40, 18);
-        lv_obj_set_pos(container, i * 44, 0); // Manual positioning
+        lv_obj_set_size(container, 32, 18);
+        lv_obj_set_pos(container, i * 33, 0); // Manual positioning
 
         // Label showing percentage
         lv_obj_t *label = lv_label_create(container);
@@ -102,7 +102,7 @@ int zmk_widget_split_battery_bar_init(struct zmk_widget_split_battery_bar *widge
 
         // Simple bar as a filled rectangle (no lv_bar widget)
         lv_obj_t *bar_bg = lv_obj_create(container);
-        lv_obj_set_size(bar_bg, 30, 4);
+        lv_obj_set_size(bar_bg, 25, 4);
         lv_obj_set_style_bg_color(bar_bg, lv_color_black(), 0);
         lv_obj_set_style_border_width(bar_bg, 1, 0);
         lv_obj_set_style_border_color(bar_bg, lv_color_white(), 0);
