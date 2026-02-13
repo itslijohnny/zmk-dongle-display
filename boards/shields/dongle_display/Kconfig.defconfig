@@ -59,6 +59,13 @@ config ZMK_DONGLE_DISPLAY_WPM_DISABLED_LAYERS
     string "Layers in which the widget is disabled, comma separated"
     default ""
 
+config ZMK_DONGLE_DISPLAY_ROTATE_180
+    bool "Rotate the display 180 degrees"
+    default n
+    help
+        Rotate the entire display by 180 degrees. Useful if your display
+        is mounted upside down.
+
 choice ZMK_DISPLAY_WORK_QUEUE
     default ZMK_DISPLAY_WORK_QUEUE_DEDICATED
 endchoice

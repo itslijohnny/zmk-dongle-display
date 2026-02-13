@@ -52,6 +52,13 @@ lv_obj_t *zmk_display_status_screen() {
 
     screen = lv_obj_create(NULL);
 
+#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_ROTATE_180)
+    // Rotate display 180 degrees
+    lv_obj_set_style_transform_angle(screen, 1800, 0); // 1800 = 180 degrees (in 0.1 degree units)
+    lv_obj_set_style_transform_pivot_x(screen, lv_pct(50), 0);
+    lv_obj_set_style_transform_pivot_y(screen, lv_pct(50), 0);
+#endif
+
     // Set up black background with white text (OLED style)
     lv_style_init(&global_style);
     lv_style_set_bg_color(&global_style, lv_color_white());
