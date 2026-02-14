@@ -13,7 +13,9 @@
 #include "widgets/output_status.h"
 #include "widgets/hid_indicators.h"
 #include "widgets/wpm_status.h"
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE)
 #include "widgets/split_battery_bar.h"
+#endif
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
 #include "widgets/caps_word_indicator.h"
 #endif
@@ -23,7 +25,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
 // New prospector-style widgets
 static struct zmk_widget_layer_roller layer_roller_widget;
-#if IS_ENABLED(CONFIG_ZMK_SPLIT)
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE)
 static struct zmk_widget_split_battery_bar split_battery_bar_widget;
 #endif
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
@@ -93,7 +95,7 @@ lv_obj_t *zmk_display_status_screen() {
 #endif
     
     // Split keyboard battery bar at top right
-#if IS_ENABLED(CONFIG_ZMK_SPLIT)
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE)
     zmk_widget_split_battery_bar_init(&split_battery_bar_widget, screen);
     lv_obj_align(zmk_widget_split_battery_bar_obj(&split_battery_bar_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
 #endif
