@@ -1,0 +1,2 @@
+/home/runner/work/zmk-dongle-display/zmk-dongle-display/boards/shields/dongle_display/_codeql_build_dir/CMakeFiles/edit_cache.dir
+/home/runner/work/zmk-dongle-display/zmk-dongle-display/boards/shields/dongle_display/_codeql_build_dir/CMakeFiles/rebuild_cache.dir
