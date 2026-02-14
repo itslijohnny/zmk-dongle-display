@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
  
-#include <lvgl.h>
+#include "lvgl_compat.h"
 
 #ifndef LV_ATTRIBUTE_IMG_SPEEDOMETER
 #define LV_ATTRIBUTE_IMG_SPEEDOMETER
