@@ -8,10 +8,8 @@
 
 #include <lvgl.h>
 
+#if defined(LVGL_VERSION_MAJOR) && (LVGL_VERSION_MAJOR >= 9)
 #if !defined(LV_IMG_CF_INDEXED_1BIT)
-#if defined(LV_COLOR_FORMAT_I1)
 #define LV_IMG_CF_INDEXED_1BIT LV_COLOR_FORMAT_I1
-#elif defined(LV_IMG_CF_INDEXED_1)
-#define LV_IMG_CF_INDEXED_1BIT LV_IMG_CF_INDEXED_1
 #endif
 #endif
