@@ -55,6 +55,7 @@ int zmk_widget_layer_roller_init(struct zmk_widget_layer_roller *widget, lv_obj_
     
     // Style for large prominent layer display
     lv_obj_set_style_text_align(widget->obj, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_font(widget->obj, &lv_font_montserrat_14, 0);
     
     sys_slist_append(&widgets, &widget->node);
 

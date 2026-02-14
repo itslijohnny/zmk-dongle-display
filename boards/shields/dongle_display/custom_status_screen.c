@@ -52,11 +52,18 @@ lv_obj_t *zmk_display_status_screen() {
 
     screen = lv_obj_create(NULL);
 
+#if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_ROTATE_180)
+    // Rotate display 180 degrees
+    lv_obj_set_style_transform_angle(screen, 1800, 0); // 1800 = 180 degrees (in 0.1 degree units)
+    lv_obj_set_style_transform_pivot_x(screen, lv_pct(50), 0);
+    lv_obj_set_style_transform_pivot_y(screen, lv_pct(50), 0);
+#endif
+
     // Set up black background with white text (OLED style)
     lv_style_init(&global_style);
-    lv_style_set_bg_color(&global_style, lv_color_black());
+    lv_style_set_bg_color(&global_style, lv_color_white());
     lv_style_set_bg_opa(&global_style, LV_OPA_COVER);
-    lv_style_set_text_color(&global_style, lv_color_white());
+    lv_style_set_text_color(&global_style, lv_color_black());
     lv_style_set_text_font(&global_style, &lv_font_unscii_8);
     lv_style_set_text_letter_space(&global_style, 1);
     lv_style_set_text_line_space(&global_style, 1);
@@ -66,12 +73,12 @@ lv_obj_t *zmk_display_status_screen() {
     
     // Large centered layer name display
     zmk_widget_layer_roller_init(&layer_roller_widget, screen);
-    lv_obj_align(zmk_widget_layer_roller_obj(&layer_roller_widget), LV_ALIGN_CENTER, 0, -10);
+    lv_obj_align(zmk_widget_layer_roller_obj(&layer_roller_widget), LV_ALIGN_CENTER, 0, 0);
     
-    // Top right: Modifiers (with optional caps word indicator)
+    // Bottom left: Modifiers (with optional caps word indicator)
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_MODIFIERS)
     zmk_widget_modifiers_init(&modifiers_widget, screen);
-    lv_obj_align(zmk_widget_modifiers_obj(&modifiers_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
+    lv_obj_align(zmk_widget_modifiers_obj(&modifiers_widget), LV_ALIGN_BOTTOM_LEFT, 0, 0);
     
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_CAPS_WORD_INDICATOR)
     zmk_widget_caps_word_indicator_init(&caps_word_indicator_widget, screen);
@@ -85,10 +92,10 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_caps_word_indicator_obj(&caps_word_indicator_widget), LV_ALIGN_TOP_RIGHT, -5, 0);
 #endif
     
-    // Split keyboard battery bar at bottom
+    // Split keyboard battery bar at top right
 #if IS_ENABLED(CONFIG_ZMK_SPLIT)
     zmk_widget_split_battery_bar_init(&split_battery_bar_widget, screen);
-    lv_obj_align(zmk_widget_split_battery_bar_obj(&split_battery_bar_widget), LV_ALIGN_BOTTOM_MID, 0, 0);
+    lv_obj_align(zmk_widget_split_battery_bar_obj(&split_battery_bar_widget), LV_ALIGN_TOP_RIGHT, 0, 0);
 #endif
     
     // Keep output status at top left for connection info
@@ -101,10 +108,10 @@ lv_obj_t *zmk_display_status_screen() {
     lv_obj_align(zmk_widget_dongle_battery_status_obj(&dongle_battery_status_widget), LV_ALIGN_TOP_RIGHT, 0, 12);
 #endif
 
-    // Optional: Keep WPM if enabled
+    // WPM at bottom right
 #if IS_ENABLED(CONFIG_ZMK_DONGLE_DISPLAY_WPM)
     zmk_widget_wpm_status_init(&wpm_status_widget, screen);
-    lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_LEFT, 0, 0);
+    lv_obj_align(zmk_widget_wpm_status_obj(&wpm_status_widget), LV_ALIGN_BOTTOM_RIGHT, 0, 0);
 #endif
 
     return screen;

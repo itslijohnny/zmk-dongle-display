@@ -9,12 +9,13 @@ endchoice
 
 config ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
     select LV_USE_LABEL
-    select LV_USE_IMAGE
+    select LV_USE_IMG
     select LV_USE_CANVAS
     select LV_USE_ANIMIMG 
     select LV_USE_ANIMATION
     select LV_USE_LINE 
     select LV_FONT_UNSCII_8
+    select LV_FONT_MONTSERRAT_14
     select ZMK_WPM
     imply ZMK_HID_INDICATORS
 
@@ -52,11 +53,18 @@ config ZMK_DONGLE_DISPLAY_LAYER_TEXT_ALIGN
 
 config ZMK_DONGLE_DISPLAY_WPM
     bool "Display the WPM widget"
-    default n
+    default y
 
 config ZMK_DONGLE_DISPLAY_WPM_DISABLED_LAYERS
     string "Layers in which the widget is disabled, comma separated"
     default ""
+
+config ZMK_DONGLE_DISPLAY_ROTATE_180
+    bool "Rotate the display 180 degrees"
+    default n
+    help
+        Rotate the entire display by 180 degrees. Useful if your display
+        is mounted upside down.
 
 choice ZMK_DISPLAY_WORK_QUEUE
     default ZMK_DISPLAY_WORK_QUEUE_DEDICATED
